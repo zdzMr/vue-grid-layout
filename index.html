@@ -45,7 +45,7 @@
                     <button @click="removeItem(item)">REMOVE {{item.i}}</button>
                 </grid-item>
             </responsive-grid-layout>-->
-            <grid-layout :layout.sync="layout" :col-num="12" :row-height="30" :is-draggable="true" :vertical-compact="true">
+            <grid-layout :layout.sync="layout" :col-num="12" :is-draggable="true">
                 <grid-item v-for="item in layout"
                            :x.sync="item.x"
                            :y.sync="item.y"

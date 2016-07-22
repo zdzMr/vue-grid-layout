@@ -1,5 +1,10 @@
 <template>
-    <div v-el:item class="vue-grid-layout" :style="mergedStyle">
+<!--
+    <div v-el:item class="vue-grid-layout">
+        <slot></slot>
+    </div>
+-->
+    <div v-el:item class="vue-grid-layout" v-dragula="layout" bag="layoutBag">
         <slot></slot>
     </div>
     <!--<pre>{{width|json}}</pre>-->
@@ -8,12 +13,25 @@
     .vue-grid-layout {
         position: relative;
         transition: height 200ms ease;
+        box-sizing: border-box;
+    }
+
+    .vue-grid-layout:before,
+    .vue-grid-layout:after {
+        display:table;
+        content: " ";
+    }
+
+    .vue-grid-layout:after {
+        clear: both;
     }
 </style>
 <script>
     var Vue = require('vue');
+    var VueDragula = require('vue-dragula');
 
-    var elementResizeDetectorMaker = require("element-resize-detector");
+    Vue.use(VueDragula);
+    //var elementResizeDetectorMaker = require("element-resize-detector");
 
     import {bottom, compact, getLayoutItem, moveElement, validateLayout} from './utils';
     import GridItem from './GridItem.vue'
@@ -24,21 +42,9 @@
             GridItem,
         },
         props: {
-            autoSize: {
-                type: Boolean,
-                default: true
-            },
             colNum: {
                 type: Number,
                 default: 12
-            },
-            rowHeight: {
-                type: Number,
-                default: 150
-            },
-            maxRows: {
-                type: Number,
-                default: Infinity
             },
             margin: {
                 type: Array,
@@ -52,14 +58,6 @@
                 type: Boolean,
                 default: true
             },
-            useCssTransforms: {
-                type: Boolean,
-                default: true
-            },
-            verticalCompact: {
-                type: Boolean,
-                default: true
-            },
             width: {
                 type: Number,
                 required: false,
@@ -70,11 +68,17 @@
         },
         data: function() {
             return {
-                mergedStyle: {},
-                lastLayoutLength: 0
             };
         },
-        ready() {
+        created: function() {
+            Vue.vueDragula.options('layoutBag', {
+                moves: function (el, source, handle, sibling) {
+                    return !handle.classList.contains("vue-resizable-handle");
+                },
+            });
+
+        },
+        ready: function() {
             validateLayout(this.layout);
             var self = this;
             window.onload = function() {
@@ -85,24 +89,21 @@
                 }
                 compact(self.layout, self.verticalCompact);
 
-                self.updateHeight();
-                self.$nextTick(function() {
+                //self.updateHeight();
+                /*self.$nextTick(function() {
 //                    self.onWindowResize();
                     var erd = elementResizeDetectorMaker({
                         strategy: "scroll" //<- For ultra performance.
                     });
                     erd.listenTo(self.$els.item, function(element) {
                         self.onWindowResize();
-                        /*var width = element.offsetWidth;
-                         var height = element.offsetHeight;
-                         console.log("Size: " + width + "x" + height);*/
                     });
-                });
+                });*/
 
             }
         },
         watch: {
-            width: function() {
+            /*width: function() {
                 this.$nextTick(function() {
                     this.$broadcast("updateWidth", this.width);
                     this.updateHeight();
@@ -118,14 +119,14 @@
                         this.updateHeight();
                     //});
                 }
-            }
+            }*/
         },
         methods: {
-            updateHeight: function() {
+            /*updateHeight: function() {
                 this.mergedStyle = {
                     height: this.containerHeight()
                 };
-            },
+            },*/
             onWindowResize: function() {
                 /*if (this.$parent !== null && this.$parent.$el.offsetWidth !== undefined) {
                     this.width = this.$parent.$el.offsetWidth;
@@ -142,45 +143,6 @@
             }
         },
         events: {
-            dragEvent: function(eventName, id, x, y) {
-                if (eventName === "drag" && x == 0 && y == 0) {
-                    return;
-                }
-                //console.log(eventName + " id=" + id + ", x=" + x + ", y=" + y);
-                var l = getLayoutItem(this.layout, id);
-
-                /*
-                 // Create placeholder (display only)
-                 var placeholder = {
-                     w: l.w, h: l.h, x: l.x, y: l.y, placeholder: true, id: id
-                 };
-                 */
-
-                // Move the element to the dragged location.
-                this.layout = moveElement(this.layout, l, x, y, true);
-                compact(this.layout, this.verticalCompact);
-                // needed because vue can't detect changes on array element properties
-                this.$broadcast("compact", this.layout);
-                this.updateHeight();
-            },
-            resizeEvent: function(eventName, id, h, w) {
-                if (eventName === "drag" && h < -40 && w < -40) {
-                    return;
-                }
-//                console.log(eventName + " id=" + id);
-
-                /*
-                 // Create placeholder (display only)
-                 var placeholder = {
-                     w: l.w, h: l.h, x: l.x, y: l.y, placeholder: true, id: id
-                 };
-                 */
-
-                // Move the element to the dragged location.
-                compact(this.layout, this.verticalCompact);
-                this.$broadcast("compact", this.layout);
-                this.updateHeight();
-            },
         }
     }
 </script>
