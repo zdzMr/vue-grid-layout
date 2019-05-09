@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Vue Grid Layout Example 1 - Basic Responsive</title>
+    <title>Vue Grid Layout Example 2 - Move and resize events</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="app.css">
+    <!--<link rel="stylesheet" href="../dist/vue-grid-layout.css">-->
 </head>
 <body>
     <h1>Vue Grid Layout Example 2 - Move and resize events</h1>
@@ -12,6 +13,8 @@
     <a href="https://github.com/jbaysolutions/vue-grid-layout">View project on Github</a>
     <br/>
     <a href="01-basic.html">Previous example: Basic</a>
+    <br/>
+    <a href="03-multiple-grids.html">Next example: Multiple grids</a>
 
     <div id="app" style="width: 100%;">
         <!--<pre>{{ $data | json }}</pre>-->
@@ -42,6 +45,11 @@
                          :is-resizable="true"
                          :vertical-compact="true"
                          :use-css-transforms="true"
+                         @layout-created="layoutCreatedEvent"
+                         @layout-before-mount="layoutBeforeMountEvent"
+                         @layout-mounted="layoutMountedEvent"
+                         @layout-ready="layoutReadyEvent"
+                         @layout-updated="layoutUpdatedEvent"
             >
                 <grid-item v-for="item in layout"
                            :x="item.x"
@@ -58,11 +66,11 @@
                 </grid-item>
             </grid-layout>
         </div>
-        <pre>{{eventLog | json}}</pre>
+        <!--<pre>{{eventLog | json}}</pre>-->
 
     </div>
     <script src="vue.min.js"></script>
-    <script src="../dist/vue-grid-layout.js"></script>
+    <script src="../dist/vue-grid-layout.umd.min.js"></script>
     <script src="02-events.js"></script>
 </body>
 </html>

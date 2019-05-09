@@ -21,20 +21,8 @@ var testLayout = [
     {"x":2,"y":6,"w":2,"h":2,"i":"19"}
 ];
 
-//var Vue = require('vue');
-
-Vue.config.debug = true;
-Vue.config.devtools = true;
-
-var GridLayout = VueGridLayout.GridLayout;
-var GridItem = VueGridLayout.GridItem;
-
 new Vue({
     el: '#app',
-    components: {
-        GridLayout,
-        GridItem,
-    },
     data: {
         layout: testLayout,
         index: 0,
@@ -53,21 +41,57 @@ new Vue({
             console.log(msg);
 
         },
-        resizeEvent: function(i, newH, newW){
-            var msg = "RESIZE i=" + i + ", H=" + newH + ", W=" + newW;
-            this.eventLog.push(msg);
-            console.log(msg);
-        },
         movedEvent: function(i, newX, newY){
             var msg = "MOVED i=" + i + ", X=" + newX + ", Y=" + newY;
             this.eventLog.push(msg);
             console.log(msg);
 
         },
-        resizedEvent: function(i, newH, newW){
-            var msg = "RESIZED i=" + i + ", H=" + newH + ", W=" + newW;
+        resizeEvent: function(i, newH, newW, newHPx, newWPx){
+            var msg = "RESIZE i=" + i + ", H=" + newH + ", W=" + newW + ", H(px)=" + newHPx + ", W(px)=" + newWPx;
             this.eventLog.push(msg);
             console.log(msg);
+        },
+        resizedEvent: function(i, newX, newY, newHPx, newWPx){
+            var msg = "RESIZED i=" + i + ", X=" + newX + ", Y=" + newY + ", H(px)=" + newHPx + ", W(px)=" + newWPx;
+            this.eventLog.push(msg);
+            console.log(msg);
+
+        },
+        /**
+         *
+         * @param i the item id/index
+         * @param newH new height in grid rows
+         * @param newW new width in grid columns
+         * @param newHPx new height in pixels
+         * @param newWPx new width in pixels
+         *
+         */
+        resizedEvent: function(i, newH, newW, newHPx, newWPx){
+            var msg = "RESIZED i=" + i + ", H=" + newH + ", W=" + newW + ", H(px)=" + newHPx + ", W(px)=" + newWPx;
+            this.eventLog.push(msg);
+            console.log(msg);
+        },
+
+        layoutCreatedEvent: function(newLayout){
+            this.eventLog.push("Created layout");
+            console.log("Created layout: ", newLayout)
+        },
+        layoutBeforeMountEvent: function(newLayout){
+            this.eventLog.push("beforeMount layout");
+            console.log("beforeMount layout: ", newLayout)
+        },
+        layoutMountedEvent: function(newLayout){
+            this.eventLog.push("Mounted layout");
+            console.log("Mounted layout: ", newLayout)
+        },
+        layoutReadyEvent: function(newLayout){
+            this.eventLog.push("Ready layout");
+            console.log("Ready layout: ", newLayout)
+        },
+        layoutUpdatedEvent: function(newLayout){
+            this.eventLog.push("Updated layout");
+            console.log("Updated layout: ", newLayout)
         },
     }
 });
