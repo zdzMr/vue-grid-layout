@@ -1,6 +1,6 @@
 {
   "name": "bi-grid-layout",
-  "version": "2.3.5",
+  "version": "2.3.11",
   "description": "A draggable and resizable grid layout, as a Vue component.",
   "keywords": [
     "grid",
@@ -17,8 +17,8 @@
     "url": "https://github.com/jbaysolutions/vue-grid-layout.git"
   },
   "author": "Gustavo Santos (JBay Solutions) <gustavo.santos@jbaysolutions.com> (http://www.jbaysolutions.com)",
-  "main": "dist/vue-grid-layout.common.js",
-  "unpkg": "dist/vue-grid-layout.umd.min.js",
+  "main": "dist/bi-grid-layout.common.js",
+  "unpkg": "dist/bi-grid-layout.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "rimraf dist && vue-cli-service build",

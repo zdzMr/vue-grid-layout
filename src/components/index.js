@@ -12,4 +12,4 @@ const VueGridLayout = {
     AddItem,
     AddLayout
 }
-module.exports = VueGridLayout
+export default VueGridLayout
