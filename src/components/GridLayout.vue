@@ -1,26 +1,22 @@
 <template>
-    <div
-        ref="item"
-        class="vue-grid-layout"
-        :style="mergedStyle"
-    >
+    <div ref="item"
+         class="vue-grid-layout"
+         :style="mergedStyle">
         <slot></slot>
-        <grid-item
-            class="vue-grid-placeholder"
-            v-show="isDragging"
-            :x="placeholder.x"
-            :y="placeholder.y"
-            :w="placeholder.w"
-            :h="placeholder.h"
-            :i="placeholder.i"
-        >
+        <grid-item class="vue-grid-placeholder"
+                   v-show="isDragging"
+                   :x="placeholder.x"
+                   :y="placeholder.y"
+                   :w="placeholder.w"
+                   :h="placeholder.h"
+                   :i="placeholder.i">
         </grid-item>
     </div>
 </template>
 <style>
 .vue-grid-layout {
-    position: relative;
-    transition: height 200ms ease;
+  position: relative;
+  transition: height 200ms ease;
 }
 </style>
 <script>
@@ -259,7 +255,7 @@ export default {
             if (!this.autoSize) return;
             return bottom(this.layout) * (this.rowHeight + this.margin[1]) + this.margin[1] + 'px';
         },
-        dragEvent: function (eventName, id, x, y, h, w) {
+        dragEvent: function (eventName, id, x, y, h, w, typeObj) {
             //console.log(eventName + " id=" + id + ", x=" + x + ", y=" + y);
             let l = getLayoutItem(this.layout, id);
             //GetLayoutItem sometimes returns null object
@@ -274,6 +270,8 @@ export default {
                     resizable: true,
                     x,
                     y,
+                    type: typeObj.type,
+                    chartType: typeObj.chartType,
                     new: true
                 }
             }
@@ -297,6 +295,7 @@ export default {
                     this.isDragging = false;
                     if (l.new) {
                         l.dragging = false
+                        l.new = false
                     }
                 });
             }

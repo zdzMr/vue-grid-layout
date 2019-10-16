@@ -1,8 +1,6 @@
 <template>
-    <div
-        :class="['add-item', `addItem${i}`]"
-        ref="addItem"
-    >
+    <div :class="['add-item', `addItem${i}`]"
+         ref="addItem">
         <slot></slot>
     </div>
 </template>
@@ -10,6 +8,7 @@
 </style>
 <script>
 import interact from 'interactjs'
+import uuid from 'uuid/v4'
 
 export default {
     name: "AddElement",
@@ -21,6 +20,12 @@ export default {
         },
         toArea: {
             type: Object,
+            required: false
+        },
+        type: {
+            required: false
+        },
+        chartType: {
             required: false
         },
         i: {
@@ -35,7 +40,8 @@ export default {
     },
     data() {
         return {
-            isDraging: false
+            isDraging: false,
+            id: uuid()
         }
     },
     inject: ['eventBus'],
@@ -76,6 +82,7 @@ export default {
             const calcColWidth = this.calcColWidth()
             const newPosition = this.getNewPosition(x, y)
             const calcXY = this.calcXY(newPosition.top, newPosition.left)
+
             // translate the element
             target.style.webkitTransform =
                 target.style.transform =
@@ -83,13 +90,19 @@ export default {
             // update the posiion attributes
             target.setAttribute('data-x', x)
             target.setAttribute('data-y', y)
-            this.toArea.dragEvent(event.type, this.i, calcXY.x, calcXY.y, this.h, this.w)
+            this.toArea.dragEvent(event.type, this.id, calcXY.x, calcXY.y, this.h, this.w, {
+                type: this.type,
+                chartType: this.chartType
+            })
         }
     },
     mounted() {
         const self = this
         interact(`.addItem${self.i}`)
-            .draggable({ onmove: self.dragMoveListener, onend: self.dragMoveListener})
+            .draggable({ onmove: self.dragMoveListener, onend: self.dragMoveListener })
+            .on('dragstart', event => {
+                self.id = uuid()
+            })
             .on('move', event => {
                 const interaction = event.interaction;
                 // if the pointer was moved while being held down
@@ -98,13 +111,18 @@ export default {
                     const original = event.currentTarget
                     // create a clone of the currentTarget element
                     const clone = event.currentTarget.cloneNode(true)
+                    const oldEle = document.querySelector(`.addItem${self.i}`)
+                    const oldElePosition = oldEle.getBoundingClientRect()
 
                     // insert the clone to the page
                     // TODO: position the clone appropriately
                     // document.body.appendChild(clone)
                     clone.style.position = 'absolute'
                     clone.style.zIndex = '1'
-                    document.querySelector('.add-container').insertBefore(clone, original.nextSibling)
+                    clone.style.top = `${oldElePosition.top}px`
+                    clone.style.left = `${oldElePosition.left}px`
+                    original.parentNode.appendChild(clone)
+                    // document.querySelector('.add-container').insertBefore(clone, original.nextSibling)
                     // start a drag interaction targeting the clone
                     interaction.start({ name: 'drag' }, event.interactable, clone)
                 }
@@ -112,8 +130,13 @@ export default {
             .on('dragend', event => {
                 // 删除复制出来的元素
                 const original = event.currentTarget
-                original && original.parentNode.removeChild(original)
-
+                original && original.parentNode && original.parentNode.removeChild(original)
+                self.$emit('end', {
+                    event,
+                    type: self.type,
+                    chartType: self.chartType,
+                    uuid: self.id
+                })
             })
 
     }

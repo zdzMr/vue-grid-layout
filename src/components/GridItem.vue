@@ -11,10 +11,10 @@
             'render-rtl' : renderRtl, 
             'disable-userselect': isDragging, 
             'no-touch': isAndroid,
-            'visibility': newDragging 
+            'visibility': newAddDragging 
         }"
         :style="style"
-    >
+    >   
         <slot></slot>
         <span
             v-if="resizableAndNotStatic"
@@ -57,8 +57,8 @@
 }
 
 .vue-grid-item.vue-draggable-dragging {
-    transition: none;
-    z-index: 3;
+    transition: none !important;
+    z-index: 3 !important;
 }
 
 .vue-grid-item.vue-grid-placeholder {
@@ -176,7 +176,7 @@ export default {
             required: false,
             default: Infinity
         },
-        newDragging: {
+        newAddDragging: {
             type: Boolean,
             required: false,
             default: false
